@@ -132,7 +132,11 @@ plt.matshow(weakness_matrix, cmap=plt.cm.Reds, aspect='auto')
 plt.title('Inverted ALS (Weakness Recommendations)')
 plt.show()
 
-# Strength embeddings directly from ALS normalised for clustering
+
+## These are the attempts to cluster the users based on the embeddings from the ALS interaction matrices. 
+# Firstly KMeans. Needs refining for the n_clusters
+
+# Strength embeddings directly from ALS, normalised for clustering
 strength_embeddings = StandardScaler().fit_transform(user_factors)
 
 # Compute pairwise cosine similarity
@@ -154,7 +158,7 @@ plt.ylabel("PCA Component 2")
 plt.title("User Clusters Based on Maximally Distances Strengths")
 plt.show()
 
-# Compute hierarchical clustering using Wards
+# Compute hierarchical clustering using Wards, using the same embeddings from the ALS as the KMeans
 linkage_matrix = linkage(strength_embeddings, method='ward')
 
 # dendrogram
@@ -172,6 +176,7 @@ print("Hierarchical clusters:", clusters_hier)
 # I did the elbow method here and recommended 2-5 clusters for rows and 10 clustered for columns
 
 # Trying out some biclustering as well
+
 n_row_clusters = 5  # TODO refine this to be the number of user clusters i.e. playstyles?
 n_col_clusters = 10  # TODO Refine this to be metacategorising the categories to be about openings, midgame etc.
 
