@@ -99,14 +99,14 @@ plt.matshow(reconstructed_matrix, cmap=plt.cm.Blues, aspect='auto')
 plt.title('Reconstructed Matrix from SVD')
 plt.show()
 
-# Compute the error between the original and reconstructed matrices
+# Compute the error between the original and reconstructed matrices. Frobenius norm as the error as its like Euclidean distance for matrices
 error = np.linalg.norm(np_pivot - reconstructed_matrix, 'fro')
 print(f"Reconstruction Error (Frobenius norm): {error}")
 
 # Perform Alternating Least Squares (ALS) for Matrix Factorisation
-pivot_sparse = csr_matrix(np_pivot)  # Convert to sparse matrix for memory efficiency
+pivot_sparse = csr_matrix(np_pivot)  # Convert to sparse matrix for memory
 
-# Instantiate ALS model (using user and problem latent factors). captures the strengths of each player in a lower latent space
+# Instantiate ALS model (using user and problem latent factors). Captures the strengths of each player in a lower latent space
 model = implicit.als.AlternatingLeastSquares(factors=200, regularization=0.1, iterations=100)
 
 # Fit the model
@@ -173,12 +173,13 @@ plt.show()
 clusters_hier = fcluster(linkage_matrix, t=20, criterion='maxclust')
 print("Hierarchical clusters:", clusters_hier)
 
-# I did the elbow method here and recommended 2-5 clusters for rows and 10 clustered for columns
+# I did the elbow method here and recommended 2-5 clusters for rows and 10 clustered for columns for the entire dataset (32000 points)
+# I redid the elbow method on the <1 ranked data set, recommended 7 row clusters and 3 columns (problem categories for columns)
 
 # Trying out some biclustering as well
 
-n_row_clusters = 5  # TODO refine this to be the number of user clusters i.e. playstyles?
-n_col_clusters = 10  # TODO Refine this to be metacategorising the categories to be about openings, midgame etc.
+n_row_clusters = 7  # TODO refine this to be the number of user clusters i.e. playstyles?
+n_col_clusters = 3  # TODO Refine this to be metacategorising the categories to be about openings, midgame etc.
 
 # Perform spectral biclustering
 bicluster_model = SpectralBiclustering(n_clusters=(n_row_clusters, n_col_clusters),
@@ -202,13 +203,15 @@ plt.figure(figsize=(8, 6))
 # Plot the reordered matrix
 plt.matshow(reordered_data, cmap=plt.cm.Blues, aspect='auto', fignum=False)
 
-# Add labels and colorbar
 plt.title("Biclustered User-Category Performance Matrix", pad=20)
 plt.xlabel("Categories")
 plt.ylabel("Users")
 plt.colorbar(label="Performance Level")
 
 plt.show()
+
+
+## This is some pairings i thought could be useful.
 
 column_labels = bicluster_model.column_labels_
 
@@ -234,7 +237,7 @@ centroids = np.array(centroids)
 
 # Compute pairwise distances between centroids
 centroid_distances = squareform(pdist(centroids))
-# To find two clusters that are maximally different, ignore the diagonal.
+# To find two clusters that are maximally different, ignore the diagonal
 i, j = np.unravel_index(np.argmax(centroid_distances, axis=None), centroid_distances.shape)
 print(f"Most opposing biclusters: Cluster {i} vs Cluster {j}")
 
