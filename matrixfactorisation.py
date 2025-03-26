@@ -82,6 +82,7 @@ subsample_pivot = pivot.sample(n=8000, random_state=42).sample(n=1000, axis=1, r
 print(subsample_pivot.head())
 
 # Perform Singular Value Decomposition (SVD) for Matrix Factorisation
+### DEPENDING ON WHETHER YOU USE CATS OR PROB_ID WILL DETERMINE HOW MANY COMPONENTS ARE USED IN TGHE LATENT SPACE (~30 for CATS, ~200-600 for PROB_ID)
 np_pivot = subsample_pivot.to_numpy()
 svd = TruncatedSVD(n_components=200)  # latent features (components)
 U = svd.fit_transform(np_pivot)    # User matrix (n_users x n_components)
@@ -106,7 +107,8 @@ print(f"Reconstruction Error (Frobenius norm): {error}")
 # Perform Alternating Least Squares (ALS) for Matrix Factorisation
 pivot_sparse = csr_matrix(np_pivot)  # Convert to sparse matrix for memory
 
-# Instantiate ALS model (using user and problem latent factors). Captures the strengths of each player in a lower latent space
+# Instantiate ALS model (using user and problem latent factors). Captures the strengths of each player in a lower latent space.
+## CHANGE FACTORS DEPENDING ON USING CATS OR PROB_ID
 model = implicit.als.AlternatingLeastSquares(factors=200, regularization=0.1, iterations=100)
 
 # Fit the model
