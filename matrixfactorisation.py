@@ -203,6 +203,16 @@ plt.figure(figsize=(8, 6))
 # Plot the reordered matrix
 plt.matshow(reordered_data, cmap=plt.cm.Blues, aspect='auto', fignum=False)
 
+# Plot the boundary lines of the clusters
+row_boundaries = np.where(np.diff(np.sort(bicluster_model.row_labels_)))[0]
+col_boundaries = np.where(np.diff(np.sort(bicluster_model.column_labels_)))[0]
+
+for boundary in row_boundaries:
+    plt.axhline(boundary + 0.5, color='red', linewidth=1)
+
+for boundary in col_boundaries:
+    plt.axvline(boundary + 0.5, color='red', linewidth=1)
+
 plt.title("Biclustered User-Category Performance Matrix", pad=20)
 plt.xlabel("Categories")
 plt.ylabel("Users")
