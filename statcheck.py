@@ -179,7 +179,18 @@ dbscan = DBSCAN(eps=0.5, min_samples=5)
 dcscan_vars['dbscan_cluster'] = dbscan.fit_predict(scaled_data)
 
 plt.figure(figsize=(10, 6))
-sns.scatterplot(data=dcscan_vars, x='user_id', y='user_rank', hue='dbscan_cluster', palette='viridis', alpha=0.7)
+
+# Plot the noise clusters as white dots, plot them first so that they dont crowd the plot too mkuch.
+sns.scatterplot(
+    data=dcscan_vars[dcscan_vars['dbscan_cluster'] == -1], x='user_id', y='user_rank', color='white',edgecolor='black', linewidth=0.25,
+    label='Noise',
+    s=10)
+
+sns.scatterplot(
+    data=dcscan_vars[dcscan_vars['dbscan_cluster'] != -1], x='user_id', y='user_rank',hue='dbscan_cluster', palette='viridis', alpha=0.7,
+    legend='full'
+)
+
 plt.title('User ID vs User Rank with DBSCAN Clusters')
 plt.xlabel('User ID')
 plt.ylabel('User Rank')
