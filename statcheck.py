@@ -11,6 +11,8 @@ import statsmodels.api as sm
 from patsy import dmatrices
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.cluster import DBSCAN
+from sklearn.metrics import silhouette_score
+from sklearn.neighbors import NearestNeighbors
 
 from biclusfunctions import loadprocess_data
 
@@ -174,6 +176,44 @@ dcscan_vars = dcscan_vars[dcscan_vars['user_rank'] >= 1]
 
 scaler = StandardScaler()
 scaled_data = scaler.fit_transform(dcscan_vars[['user_id', 'user_rank', 'opening', 'middle_game', 'endgame']])
+
+# elbow method to find optimal epsilon, change k for tuning.
+k = 4
+nbrs = NearestNeighbors(n_neighbors=k).fit(scaled_data)
+distances, indices = nbrs.kneighbors(scaled_data)
+
+# Sort distances to find elbow
+sorted_distances = np.sort(distances[:, k-1]) 
+plt.figure(figsize=(8, 5))
+plt.plot(sorted_distances)
+plt.xlabel("Points sorted by distance")
+plt.ylabel(f"{k}-th Nearest Neighbor Distance")
+plt.title("Elbow Method for Choosing eps")
+plt.show()
+
+eps_values = [3, 4, 5, 6, 7]  # Adjust based on the k-distance plot
+min_samples_values = [3, 5, 7, 10]
+
+best_score = -1
+best_params = None
+
+for eps in eps_values:
+    for min_samples in min_samples_values:
+        dbscan = DBSCAN(eps=eps, min_samples=min_samples)
+        labels = dbscan.fit_predict(scaled_data)
+        
+        # Ignore if all points are noise (-1 labels)
+        if len(set(labels)) > 1:
+            score = silhouette_score(scaled_data, labels)
+            print(f"eps={eps}, min_samples={min_samples}, silhouette={score:.4f}")
+            
+            if score > best_score:
+                best_score = score
+                best_params = (eps, min_samples)
+
+print(f"\nBest Parameters: eps={best_params[0]}, min_samples={best_params[1]}")
+
+# Adjuts the epsilon and min_samples based on results from the silouette scores
 
 dbscan = DBSCAN(eps=0.5, min_samples=5)
 dcscan_vars['dbscan_cluster'] = dbscan.fit_predict(scaled_data)
