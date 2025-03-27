@@ -178,7 +178,7 @@ scaler = StandardScaler()
 scaled_data = scaler.fit_transform(dcscan_vars[['user_id', 'user_rank', 'opening', 'middle_game', 'endgame']])
 
 # elbow method to find optimal epsilon, change k for tuning.
-k = 4
+k = 2
 nbrs = NearestNeighbors(n_neighbors=k).fit(scaled_data)
 distances, indices = nbrs.kneighbors(scaled_data)
 
@@ -191,7 +191,7 @@ plt.ylabel(f"{k}-th Nearest Neighbor Distance")
 plt.title("Elbow Method for Choosing eps")
 plt.show()
 
-eps_values = [3, 4, 5, 6, 7]  # Adjust based on the k-distance plot
+eps_values = [0.3, 0.4, 0.5, 0.6, 0.7]  # Adjusted based on the k-distance plot
 min_samples_values = [3, 5, 7, 10]
 
 best_score = -1
