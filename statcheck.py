@@ -170,12 +170,12 @@ plt.show()
 
 # DBSCAN clustering to find outliers
 
-dcscan_vars = users.drop(columns=['fighting', 'tesuji', 'life_and_death', 'analysis', 'knowledge', 'reading', 'reading_max', 'streak_max', 'streak'])
+dcscan_vars = users.drop(columns=['opening', 'middle_game', 'endgame', 'fighting', 'tesuji', 'life_and_death', 'analysis', 'knowledge', 'reading'])
 
-dcscan_vars = dcscan_vars[dcscan_vars['user_rank'] >= 1]
+#dcscan_vars = dcscan_vars[dcscan_vars['user_rank'] >= 1]
 
 scaler = StandardScaler()
-scaled_data = scaler.fit_transform(dcscan_vars[['user_id', 'user_rank', 'opening', 'middle_game', 'endgame']])
+scaled_data = scaler.fit_transform(dcscan_vars[['user_id', 'user_rank', 'reading_max', 'streak_max', 'xp', 'streak']])
 
 # elbow method to find optimal epsilon, change k for tuning.
 k = 2
